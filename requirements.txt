@@ -1,0 +1,4 @@
+gradio~=4.44.1
+openai~=1.55.3
+ruamel.yaml~=0.17.32
+colorlog~=6.8.2

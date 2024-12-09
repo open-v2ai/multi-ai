@@ -1,0 +1,7 @@
+conf/*.prod.yaml
+conf/*.test.yaml
+__pycache__
+.DS_Store
+log/
+data/
+script/
