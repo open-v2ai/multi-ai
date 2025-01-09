@@ -31,7 +31,7 @@ async def call_llm(name: str, message: str, stream: bool = True):
         
         if stream:
             async for chunk in response:
-                if chunk.choices[0].delta.content:
+                if chunk.choices and chunk.choices[0].delta.content:
                     yield chunk.choices[0].delta.content
         else:
             yield response.choices[0].message.content

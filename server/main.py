@@ -9,14 +9,14 @@ from util.llm import call_llm
 logger = get_logger("server.main")
 conf = get_conf()
 
-async def process(question, progress=gr.Progress()):
+async def process(question):
     logger.info(question)
 
     """处理分析请求的主函数"""
     llm_len = len(conf["llms"])
     try:
         # 创建初始结果列表
-        results = [""] * llm_len
+        results = ["" for _ in range(llm_len)]
 
         async def process_single_model(model, index):
             """处理单个模型的响应"""
@@ -74,20 +74,24 @@ async def process(question, progress=gr.Progress()):
 
 # 创建 Gradio 界面 theme="NoCrypt/miku"
 with gr.Blocks() as demo:
-    gr.Markdown("# 🤖 AI一问多答")
+    gr.Markdown("# 🤖 AI智囊团")
 
     with gr.Row():
         question = gr.Textbox(
             label="问题",
-            value="给我讲1个长笑话吧",
-            lines=4
+            value="给我讲一个笑话吧",
+            scale=3
         )
-    send_button = gr.Button("一键问问", variant="primary")
+        send_button = gr.Button("为朕分忧", variant="primary", scale=1)
+
+    with gr.Row():
+        for index, name in enumerate(conf["llms"].keys()):
+            gr.Markdown(f"## {index+1} {name}")
 
     with gr.Row():
         llm_output_list = []
-        for name, llm_conf in conf["llms"].items():
-            llm_output = gr.Textbox(label=name, lines=10)
+        for _ in conf["llms"].keys():
+            llm_output = gr.Markdown("", height=600)
             llm_output_list.append(llm_output)
 
     send_button.click(
