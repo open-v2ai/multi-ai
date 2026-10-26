@@ -9,7 +9,7 @@ from util.llm import call_llm
 logger = get_logger("server.main")
 conf = get_conf()
 
-async def process(question):
+async def process(question, progress=gr.Progress()):
     logger.info(question)
 
     """处理分析请求的主函数"""
@@ -74,25 +74,23 @@ async def process(question):
 
 # 创建 Gradio 界面 theme="NoCrypt/miku"
 with gr.Blocks() as demo:
-    gr.Markdown("# 🤖 AI智囊团")
+    gr.Markdown("# 🤖 AI 后宫智囊团")
 
     with gr.Row():
         question = gr.Textbox(
-            label="问题",
-            value="给我讲一个笑话吧",
+            label="臣有本要奏",
+            value="我昨天听到一个小笑话，",
             scale=3
         )
         send_button = gr.Button("为朕分忧", variant="primary", scale=1)
 
+    llm_output_list = []
     with gr.Row():
         for index, name in enumerate(conf["llms"].keys()):
-            gr.Markdown(f"## {index+1} {name}")
-
-    with gr.Row():
-        llm_output_list = []
-        for _ in conf["llms"].keys():
-            llm_output = gr.Markdown("", height=600)
-            llm_output_list.append(llm_output)
+            with gr.Column(variant="panel", min_width=280):
+                gr.Markdown(f"## {index+1} {name}")
+                llm_output = gr.Markdown("", height=400, show_copy_button=True)
+                llm_output_list.append(llm_output)
 
     send_button.click(
         process,
